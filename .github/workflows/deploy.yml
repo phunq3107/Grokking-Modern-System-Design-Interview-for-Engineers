@@ -28,8 +28,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
       - name: Generate website
-        run: python3 scripts/generate_index.py
+        run: python scripts/generate_index.py
+
+      - name: Verify generated website
+        run: |
+          echo "Checking generated files..."
+          test -f dist/index.html
+          find dist -type f -print
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -37,8 +48,9 @@ jobs:
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v4
         with:
+          name: github-pages
           path: dist
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy website
         id: deployment
         uses: actions/deploy-pages@v4
